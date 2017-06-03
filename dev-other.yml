@@ -1,0 +1,7 @@
+---
+- hosts: other
+  remote_user: ubuntu
+  become: yes
+  roles:
+    - { role: common,                 tags: [ 'common'                , 'common-dev'                  , 'common-all'              ] }
+    - { role: docker,                 tags: [ 'docker'                , 'docker-dev'                  , 'docker-all'              ] }

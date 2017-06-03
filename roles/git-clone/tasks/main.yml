@@ -1,0 +1,38 @@
+vars:
+    - destination: /your/dest/path
+
+ - name: tajawal | clone repo
+   git: repo=git@github.com:tajawal/{{ item.repo }}.git dest={{ item.dest }} recursive=yes track_submodules=yes accept_hostkey=yes force=yes key_file={{ all_git_key }}
+   with_items:
+     -
+       dest: "{{ destination }}"
+       repo: PrimaryRepo
+     -
+       dest: "{{ destination }}/app/core"
+       repo: SubmoduleRepo
+
+- name: composer selfupdate
+  shell: composer selfupdate
+  become: true
+  tags:
+    - deploy-be
+    - deploy-all
+    - deploy-flight-api
+    - deploy
+    - composer-all
+    - composer-flight-api
+    - composer-be
+
+- name: Composer Install / Update
+  shell: composer install --no-interaction -o --prefer-dist
+  args:
+    chdir: "{{ flight_api_www_dir }}/{{ flight_api_release_id }}"
+  become: true
+  tags:
+    - deploy-be
+    - deploy-all
+    - deploy-flight-api
+    - deploy
+    - composer-all
+    - composer-flight-api
+    - composer-be

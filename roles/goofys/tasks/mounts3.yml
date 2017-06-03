@@ -1,0 +1,39 @@
+---
+#- name: Ensure .aws exist
+#  become_user: root
+#  file: path="/root/.aws/" state=directory owner=root
+#  ignore_errors: true
+#  tags:
+#    - aws-exist
+#
+#- name: AWS Credintials
+#  become_user: root
+#  template: src=aws_credentials.j2 dest="/root/.aws/credentials"
+#  ignore_errors: true
+#  tags:
+#    - credentials
+
+
+- name: Create s3 mount point
+  become_user: root
+  file: path="{{ item.path }}" state=directory owner=root group=root mode=0777 recurse=yes
+  ignore_errors: true
+  with_items: "{{ s3_mount }}"
+  tags:
+    - mount-point
+
+- name: Mount s3 goofys
+  become_user: root
+  mount:
+    name: "{{ item.path }}"
+    src: "goofys#{{ item.bucket_name }}"
+    fstype: fuse
+    opts: "_netdev,allow_other,--file-mode=0755"
+    state: mounted
+  environment:
+    AWS_ACCESS_KEY: "{{ item.AWS_ACCESS_KEY }}"
+    AWS_SECRET_KEY: "{{ item.AWS_SECRET_KEY }}"
+  with_items: "{{ s3_mount }}"
+  tags:
+    - mount-s3
+    - goofys-mount

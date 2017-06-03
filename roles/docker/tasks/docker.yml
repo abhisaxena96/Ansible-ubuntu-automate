@@ -1,0 +1,37 @@
+---
+- name: install system pakcages and utils
+  shell: wget -qO- https://get.docker.com/ | sh
+  tags:
+    - osticket
+    - deploy-osticket
+    - docker
+    - osticket-docker
+
+- name: adding your user to the "docker" group
+  become: yes
+  shell: usermod -aG docker {{ user }}
+  tags:
+    - osticket
+    - deploy-osticket
+    - docker
+    - osticket-docker
+
+- name: installing docker-compose
+  become: yes
+  shell: curl -o /usr/local/bin/docker-compose -L "https://github.com/docker/compose/releases/download/{{ docker_composer }}/docker-compose-$(uname -s)-$(uname -m)"
+  tags:
+    - osticket
+    - deploy-osticket
+    - docker-composer
+    - osticket-docker-composer
+
+- name: docker-compose permission
+  become: yes
+  shell: chmod +x /usr/local/bin/docker-compose
+  tags:
+    - osticket
+    - deploy-osticket
+    - docker-composer
+    - osticket-docker-composer
+    - docker-compose-permission
+

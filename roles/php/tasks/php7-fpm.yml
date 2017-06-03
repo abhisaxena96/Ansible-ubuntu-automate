@@ -1,0 +1,97 @@
+---
+#  this will install php7.1 on ubuntu macine
+#
+#
+
+- name: add php 7 repo
+  apt_repository: repo='ppa:ondrej/php' update_cache=yes validate_certs=no
+  tags:
+    - php7-repo
+
+- name: install php-fpm and packages
+  apt: name={{ item }} state=latest update_cache=yes cache_valid_time=5400
+  register: phpfpm_result
+  notify:
+   - reload php-fpm
+  with_items:
+   - php7.1-fpm
+   - php7.1
+   - php7.1-common
+   - php7.1-cli
+   - php7.1-curl
+   - php7.1-gd
+   - php7.1-gmp
+   - php7.1-imap
+   - php7.1-intl
+   - php7.1-mcrypt
+   - php7.1-readline
+   - php7.1-xmlrpc
+   - php7.1-xsl
+   - php7.1-json
+   - php7.1-mysql
+   - php7.1-opcache
+   - php7.1-apcu
+   - php-redis
+   - php7.1-apcu
+   - php7.1-bz2
+   - php7.1-bcmath
+   - php7.1-mbstring
+   - php7.1-soap
+   - php7.1-xml
+   - php7.1-zip
+   - php7.1-dev
+   - php7.1-mongodb
+   - php7.1-sqlite3
+   - pkg-config
+   - libssl-dev
+   - libsslcommon2-dev
+   ## ohv ubuntu
+   - libpcre3-dev
+   - libsasl2-dev
+  tags:
+    - php7-packages
+
+- name: phpenmod items
+  shell: phpenmod {{ item }}}
+  with_items:
+    - mcrybt
+    - mongodb
+    - apcu
+  tags:
+    - php7-symlink
+    - symlink
+
+- name: ensure phpfpm log is enabled
+  file: path=/var/log/php-pool-www.error.log mode=0777 state=touch
+  tags:
+    - php7
+    - log
+
+# install composer
+- name: download composer
+  get_url:
+    url=http://getcomposer.org/installer force=yes
+    dest=/tmp/composer
+    mode=0755
+  tags:
+    - php-composer
+    - composer
+
+- name: install composer
+  shell: php /tmp/composer --install-dir=/usr/local/bin creates=/usr/local/bin/composer
+  tags:
+    - php-composer
+    - composer
+
+- name: rename composer.phar to composer
+  shell: mv /usr/local/bin/composer.phar /usr/local/bin/composer creates=/usr/local/bin/composer
+  tags:
+    - php-composer
+    - composer
+
+- name: make composer executable
+  file: path=/usr/local/bin/composer mode=a+x state=file
+  tags:
+    - php-composer
+    - composer
+

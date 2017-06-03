@@ -1,0 +1,4 @@
+nginx_dir: /etc/nginx
+php_dir: /etc/php/7.1/
+php_fpm_dir: /etc/php/7.1/fpm
+keys_dir: www

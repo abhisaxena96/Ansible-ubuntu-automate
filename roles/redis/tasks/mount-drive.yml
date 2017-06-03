@@ -1,0 +1,96 @@
+---
+- name: setup group
+  group: name="{{ redis_daemon_group }}" state=present system=yes
+  tags:
+    - group
+    - redis-group
+
+- name: setup user
+  user: name="{{ redis_daemon_user }}" state=present group="{{ redis_daemon_group }}" system=yes
+  tags:
+    - user
+    - redis-user
+
+## Mount drive
+- name: ensure xfsprogs installed
+  apt: name=xfsprogs state=latest
+  when: mount_fs is defined and mount_fs == 'xfs'
+  tags:
+    - mount
+    - redis-mount
+
+- name: check if drive is fromatted
+  shell: file -s /dev/xvdf
+  ignore_errors: true
+  changed_when: False
+  register: file_sys
+  tags:
+    - mount
+    - redis-mount
+
+- name: display output
+  debug: var=file_sys
+  tags:
+    - redis-output
+
+- name: mkfs
+  shell: "mkfs -t {{mount_fs}} /dev/xvdf"
+  when: "': data' in file_sys.stdout"
+  tags:
+    - mount
+    - redis-mount
+
+- name: create mount point
+  file: path={{mount_path}} state=directory owner=root group=root mode=0777
+  tags:
+    - mount
+    - redis-mount
+
+- name: mount
+  mount:
+    name: "{{mount_path}}"
+    src: /dev/xvdf
+    fstype: "{{mount_fs}}"
+    opts: "defaults,nofail,discard,nobootwait,noatime"
+    state: mounted
+  tags:
+    - mount
+    - redis-mount
+
+- name: check if {{redis_datadir}} is symbolic link
+  shell: "file {{redis_datadir}}"
+  ignore_errors: true
+  changed_when: False
+  register: lib_redis
+  tags:
+    - mount
+    - redis-mount
+
+- name: display redis Output
+  debug: var=lib_redis
+  ignore_errors: true
+  tags:
+    - output
+    - redis-output
+
+- name: remove old redis folder
+  file: path="{{redis_datadir}}" state=absent
+  when: "': symbolic link to' not in lib_redis.stdout"
+  ignore_errors: true
+  tags:
+    - mount
+    - redis-mount
+
+- name: ensure {{mount_path}}{{redis_datadir}} exist
+  file: path="{{mount_path}}{{redis_datadir}}" owner={{redis_daemon_user}} group={{redis_daemon_group}} state=directory recurse=yes
+  ignore_errors: true
+  tags:
+    - mount
+    - redis-mount
+
+- name: redis {{mount_path}}{{redis_datadir}} -> {{redis_datadir}}
+  file: src="{{mount_path}}{{redis_datadir}}" dest={{redis_datadir}} owner={{redis_daemon_user}} group={{redis_daemon_group}} state=link
+  ignore_errors: true
+  tags:
+    - mount
+    - redis-mount

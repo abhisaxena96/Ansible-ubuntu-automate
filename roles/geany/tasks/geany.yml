@@ -1,0 +1,4 @@
+---
+- name: install geany
+  apt: name=geany state=latest
+  sudo: yes

@@ -1,0 +1,19 @@
+---
+- name: add canonical partner repository
+  become: yes
+  apt_repository:
+    repo: deb http://archive.canonical.com/ubuntu xenial partner
+    state: present
+
+- name: Skype | Install Skype and all Dependencies
+  command: "{{ item }}"
+  sudo: yes
+  with_items:
+    - "dpkg --add-architecture i386"
+
+- name: Update and install skype
+  sudo: yes
+  apt: name={{ item }} state=latest update_cache=yes
+  with_items:
+   - skype
+

@@ -1,0 +1,9 @@
+---
+# This role deploys the mongodb processes and sets up settings.
+
+- name: Include Debian variables.
+  include_vars: "Debian.yml"
+
+- include: setup-Debian.yml
+  when: ansible_os_family == 'Debian'
+

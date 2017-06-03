@@ -1,0 +1,11 @@
+---
+- name: download foo.conf
+  get_url:
+    url: https://download.robomongo.org/0.8.5/linux/robomongo-0.8.5-x86_64.deb
+    dest: /home/ubuntu
+
+- name: Install a .deb package
+  become: yes
+  apt:
+    deb: /home/ubuntu/robomongo-0.8.5-x86_64.deb
+

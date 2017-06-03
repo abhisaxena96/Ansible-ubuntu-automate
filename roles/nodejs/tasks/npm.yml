@@ -1,0 +1,34 @@
+---
+- name: curl nodesource ppa
+  apt_repository: repo="deb https://deb.nodesource.com/node_7.x trusty main" update_cache=yes validate_certs=no
+  tags:
+    - nodejs-packages
+    - nodejs-version
+
+- name: install npm nodejs
+  apt: name={{ item }} state=latest update_cache=yes cache_valid_time=5400
+  with_items:
+   - libfontconfig
+   - nodejs
+  tags:
+    - nodejs-packages
+    - nodejs-version
+
+- name: install global npm packages
+  npm: name={{ item }} global=yes
+  with_items:
+   - npm
+   - forever
+   - bower
+   - browserify
+   - grunt
+   - grunt-cli
+   - gulp
+   - uglifyjs
+   - watchy
+   - yarn
+   - pm2@latest
+  tags:
+    - npm-packages
+    - pm2
+    - pm2-install

@@ -1,0 +1,21 @@
+---
+- name: include common
+  include: common.yml
+  tags:
+    - common-task
+    - packages-task
+
+- name: include zsh
+  include: zsh.yml
+  tags:
+    - zsh-task
+    - zsh-install
+
+- name: include keys
+  include: keys.yml
+  tags:
+    - keys
+    - ssh
+    - ssh-keys
+
+- include: nrpe.yml

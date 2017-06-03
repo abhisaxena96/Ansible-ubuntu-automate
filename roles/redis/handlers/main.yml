@@ -1,0 +1,31 @@
+---
+# stop main redis
+- name: redis stop
+  service: name=redis-server state=stopped
+
+- name: redis restart
+  service: name=redis-server state=restarted
+
+- name: redis reload
+  service: name=redis-server state=reload
+
+- name: redis start
+  service: name=redis-server state=started enabled=yes
+
+- name: redis-6380 restart
+  service: name=redis-6380 state=restarted
+
+- name: redis-6380 reload
+  service: name=redis-6380 state=reload
+
+- name: redis-6380 start
+  service: name=redis-6380 state=started enabled=yes
+
+- name: redis-6381 restart
+  service: name=redis-6381 state=restarted
+
+- name: redis-6381 reload
+  service: name=redis-6381 state=reload
+
+- name: redis-6381 start
+  service: name=redis-6381 state=started enabled=yes

@@ -1,0 +1,3 @@
+---
+- name: include install skype
+  include: skype.yml

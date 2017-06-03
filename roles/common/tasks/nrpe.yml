@@ -1,0 +1,26 @@
+---
+
+- name: Install nrpe (Icinga Client)
+  apt: name={{ item }} state=latest update_cache=yes cache_valid_time=5400
+  with_items:
+   - nagios-plugins
+   - nagios-nrpe-server
+  tags:
+    - icinga
+    - icinga-install
+    - nrpe
+    - nrpe-install
+
+- name: deploy nrpe.cfg
+  template: src=files/nrpe.in dest=/etc/nagios/nrpe.cfg
+  tags:
+    - nrpe-config
+    - icinga-config
+
+  # NRPE service Restart
+
+- name: restart icinga clinet
+  service: name=nagios-nrpe-server state=restarted
+  tags:
+    - icinga-restart
+    - nrpe-restart

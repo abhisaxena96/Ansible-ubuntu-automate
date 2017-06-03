@@ -1,0 +1,57 @@
+---
+- name: configuration data
+  become: "{{ansible_user_id}}"
+  local_action: |
+    command echo "
+    env                         ==>  {{Env}}
+    mount_fs                    ==>  {{mount_fs}}
+    mount_path                  ==>  {{mount_path}}
+    redis_daemon_user           ==>  {{redis_daemon_user}}
+    redis_daemon_group          ==>  {{redis_daemon_group}}
+    redis_datadir               ==>  {{redis_datadir}}
+    "
+  register: config_out
+  changed_when: false
+  tags:
+    - redis
+    - redis-conf
+    - redis-print-conf
+
+- name: print config
+  debug: var=config_out.stdout_lines
+  when: config_out is defined
+  tags:
+    - redis
+    - redis-conf
+    - redis-print-conf
+
+- name: mount drive
+  include: mount-drive.yml
+  when: mount_drive is defined and mount_drive|bool == true
+  tags:
+    - redis
+    - redis-server
+    - redis-6380
+    - redis-6381
+    - mount
+    - redis-mount
+
+- name: install redis 6380
+  include: redis.yml
+  tags:
+    - redis
+    - redis-server
+    - redis-6380
+
+  vars:
+    port: 6380
+
+- name: install redis 6381
+  include: redis.yml
+  tags:
+    - redis
+    - redis-server
+    - redis-6381
+
+  vars:
+    port: 6381

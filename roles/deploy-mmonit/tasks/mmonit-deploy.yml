@@ -1,0 +1,39 @@
+---
+- name: install sendmail
+  apt: name=sendmail state=present
+  tags:
+   - sendmail
+   - sendmail-install
+
+- name: clone mmonit repo
+  git: repo={{ mmonit_repo_url }} version={{ mmonit_repo_version }} dest={{ mmonit_www_dir }}/{{ mmonit_release_id }}
+    recursive=yes track_submodules=yes accept_hostkey=yes force=yes key_file={{ all_git_key }}
+  register: code_deoployed
+  tags:
+    - clone
+    - mmonit-clone
+
+- name: copy init mmonit file
+  template: src=files/mmonit_upstart.conf
+            dest=/etc/init/mmonit.conf owner=ubuntu group=ubuntu mode=0755 force=yes
+  tags:
+    - mmonit-upstart
+    - mmonit-conf
+
+- name: copy init.d mmonit file
+  template: src=files/mmonit_initd.conf
+            dest=/etc/init.d/mmonit owner=ubuntu group=ubuntu mode=0755 force=yes
+  tags:
+    - mmonit-initd-config
+
+- name: replace server.xml vars
+  replace: regexp='address="\*"' replace="address=\"{{ ansible_default_ipv4.address }}\""
+            dest={{ mmonit_www_dir }}/conf/{{ mmonit_release_id }}/server.xml
+  tags:
+    - server-vars
+    - mmonit-server-xml
+
+- name: restart mmonit deploy
+  shell: service mmonit restart
+  tags:
+    - mmonit-reload

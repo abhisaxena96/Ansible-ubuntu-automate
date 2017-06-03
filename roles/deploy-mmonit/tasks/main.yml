@@ -1,0 +1,5 @@
+---
+- name: mmonit deploy
+  include: mmonit-deploy.yml
+  tags:
+    - mmonit-deploy

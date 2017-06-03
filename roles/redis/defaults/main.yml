@@ -1,0 +1,2 @@
+---
+reset_db_path: "{{ default(0) }}"

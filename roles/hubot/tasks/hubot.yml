@@ -1,0 +1,27 @@
+- name: clone hotel api repo
+  git: repo={{ hotel_api_repo_url }} version={{ hotel_api_repo_version }} dest={{ hotel_api_www_dir }}/{{ hotel_api_release_id }}
+    recursive=yes track_submodules=yes accept_hostkey=yes force=yes key_file={{ all_git_key }}
+  register: code_deoployed
+  tags:
+    - deploy
+    - deploy-hotel-api
+    - clone
+    - clone-hotel-api
+
+- name: composer selfupdate
+  shell: composer selfupdate
+  become: true
+  tags:
+    - composer
+    - composer-hotel-api
+    - composer-selfupdate
+
+- name: composer install / update
+  shell:   composer install --no-interaction -o --prefer-dist
+  args:
+    chdir: "{{ hotel_api_www_dir }}/{{ hotel_api_release_id }}"
+  become: true
+  tags:
+    - composer
+    - composer-hotel-api
+    - composer-install

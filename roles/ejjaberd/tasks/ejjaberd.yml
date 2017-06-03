@@ -1,0 +1,6 @@
+---
+- name: Update and install ejabberd
+  sudo: yes
+  apt: name={{ item }} state=latest update_cache=yes
+  with_items:
+   - ejabberd

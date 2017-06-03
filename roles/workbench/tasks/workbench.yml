@@ -1,0 +1,4 @@
+---
+- name: install workbench
+  apt: name=mysql-workbench state=latest
+  sudo: yes

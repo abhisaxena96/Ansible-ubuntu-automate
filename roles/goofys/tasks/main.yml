@@ -1,0 +1,12 @@
+---
+- name: install goofys
+  include: setup.yml
+  tags:
+    - goofys
+
+- name: mount drive
+  include: mounts3.yml
+  when: s3_mount is defined and s3_mount|length > 0
+  tags:
+    - goofys
+    - mounts3

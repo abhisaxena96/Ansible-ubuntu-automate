@@ -1,0 +1,12 @@
+---
+- name: download foo.conf
+  get_url:
+    url: https://downloadus2.teamviewer.com/download/version_12x/teamviewer_12.0.71510_i386.deb
+    dest: /home/ubuntu
+
+- name: Install a .deb package
+  become_method: sudo
+  become: yes
+  apt:
+    deb: /home/ubuntu/teamviewer_12.0.71510_i386.deb
+

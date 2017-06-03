@@ -1,0 +1,87 @@
+---
+## Copy keys files and configuration
+
+- name: ensure monit installed
+  apt: name={{ item }} state=latest update_cache=yes cache_valid_time=600
+  with_items:
+   - monit
+  tags:
+    - monit packages
+    - monit
+
+#- name: stop monit deploy
+#  shell: service monit stop
+#  ignore_errors: true
+#  tags:
+#    - monit
+#    - monit-stop
+#    - mmonit
+#
+#- name: remove monit deploy
+#  apt: name=monit state=absent
+#  ignore_errors: true
+#  tags:
+#    - monit
+#    - monit-remove
+#    - mmonit
+
+- name: /var/monit/ dir
+  file: path=/var/monit/ state=directory
+  tags:
+    - monit packages
+    - monit
+
+- name: Download and unzip monit
+  get_url: url=https://mmonit.com/monit/dist/binary/5.17.1/monit-5.17.1-linux-x64.tar.gz dest=/var/monit mode=0755
+
+
+- name: Download and unzip monit
+  unarchive: src=/var/monit/monit-5.17.1-linux-x64.tar.gz dest=/var/monit copy=no
+  tags:
+    - monit packages
+    - monit
+
+- name: Stop monit Deploy
+  shell: service monit stop
+  tags:
+    - reload mmonit
+    - monit
+
+- name: monit bin
+  shell: cp /var/monit/monit-5.17.1/bin/monit /usr/bin/
+  ignore_errors: true
+  tags:
+    - monit packages
+    - monit
+
+
+- name: Transfer monit Config /etc/monitrc
+  template: src=monit/monitrc.conf dest=/etc/monit/monitrc owner=root group=root mode=0600
+  tags:
+    - monit config
+    - monit
+
+- name: Transfer monit Config /etc/monitrc
+  template: src=monit/monitrc.conf dest=/etc/monitrc owner=root group=root mode=0600
+  tags:
+    - monit config
+    - monit
+
+
+- name: Transfer monit system.conf
+  template: src=monit/conf.d/system.conf dest=/etc/monit/conf.d/system.conf owner=root group=root mode=0600
+  tags:
+    - monit config
+    - monit
+
+- name: Transfer monit id /var/lib/monit/id
+  template: src=monit/monit.id dest=/var/lib/monit/id owner=root group=root mode=0600
+  tags:
+    - monit config
+    - monit
+
+- name: Restart monit Deploy
+  shell: service monit restart
+  tags:
+    - reload mmonit
+    - monit

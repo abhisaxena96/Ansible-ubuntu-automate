@@ -1,0 +1,54 @@
+# set dedicated repository
+---
+- name: add apt pkgs
+  apt: name={{item}} state=latest
+  with_items:
+    - python-apt
+    - ca-certificates
+  tags:
+    - redis-pkgs
+
+- name: add redis repository
+  apt_repository: repo='ppa:chris-lea/redis-server' update_cache=yes validate_certs=no
+  tags:
+    - redis-repo
+
+- name: install redis
+  apt: name=redis-server state=present
+
+- name: ensure /data/redis exist
+  file: path=/data/redis/ owner="{{redis_daemon_user}}" group="{{redis_daemon_group}}" state=directory
+  tags:
+    - redis-data
+
+- name: ensure original redis stopped
+  service: name=redis-server state=stopped enabled=no
+  tags:
+    - redis-org-stop
+
+- name: configure redis to allow external connections
+  template: src=redis.conf.j2 dest=/etc/redis/redis-{{port}}.conf
+  notify: redis-{{port}} restart
+  tags:
+    - redis-conf
+
+- name: configure redis2 init script
+  template: src=redis-init.j2  dest=/etc/init.d/redis-{{port}} mode=0755
+  notify: redis-{{port}} restart
+  tags:
+    - redis-conf
+    - redis-init
+
+- name: creates directory
+  file: path={{redis_datadir}}/{{port}} state=directory owner="{{redis_daemon_user}}" group="{{redis_daemon_group}}" mode=0755
+
+- name: ensure redis is running and enabled on boot.
+  service: name=redis-{{port}} state=started enabled=yes
+  tags:
+    - redis-startup
+
+- name: ensure redis-{{port}} started
+  shell: /bin/true
+  notify: redis-{{port}} start
+  tags:
+    - redis-status

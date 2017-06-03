@@ -1,0 +1,16 @@
+---
+
+## PHP5/7-FPM Handlers
+
+- name: start php-fpm
+  service: name=php7.1-fpm state=started
+
+- name: reload php-fpm
+  service: name=php7.1-fpm state=reloaded
+
+- name: restart php-fpm
+  service: name=php7.1-fpm state=restarted
+
+- name: restart php-dev
+  shell: service php7.1-fpm restart
+

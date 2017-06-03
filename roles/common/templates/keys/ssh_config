@@ -1,0 +1,21 @@
+#{{ ansible_managed }}
+Host *
+  StrictHostKeyChecking no
+
+Host gitlab.com
+  HostName gitlab
+  User git
+  IdentityFile ~/.ssh/id_rsa
+  IdentitiesOnly yes
+
+Host github.com
+  HostName github
+  User git
+  IdentityFile ~/.ssh/id_rsa
+  IdentitiesOnly yes
+
+Host bitbucket.com
+  HostName bitbucket
+  User git
+  IdentityFile ~/.ssh/id_rsa
+  IdentitiesOnly yes

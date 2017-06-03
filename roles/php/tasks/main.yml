@@ -1,0 +1,23 @@
+---
+- name: install php7
+  include: php7-fpm.yml
+  tags:
+    - php
+    - php-install
+    - php7
+
+- name: install php7-pecl
+  include: php7-pecl.yml
+  tags:
+    - php
+    - php-install
+    - php7
+    - php7-pecl
+
+- name: copy php7 configuration
+  include: php7-config.yml
+  tags:
+    - php
+    - php-install
+    - php7
+    - php7-config

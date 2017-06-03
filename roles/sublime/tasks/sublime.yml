@@ -1,0 +1,12 @@
+---
+- name: add sublime repository
+  become: yes
+  apt_repository:
+    repo: 'ppa:webupd8team/sublime-text-3'
+    state: present
+
+- name: Update and install sublime
+  sudo: yes
+  apt: name={{ item }} state=latest update_cache=yes
+  with_items:
+   - sublime-text-installer

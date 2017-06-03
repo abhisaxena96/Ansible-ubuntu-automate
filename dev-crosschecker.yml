@@ -1,0 +1,21 @@
+---
+- hosts: crosschecker
+  remote_user: ubuntu
+  become: yes
+  roles:
+      - { role: common,                 tags: [ 'common'                , 'common-dev'                  , 'common-all'              ] }
+      - { role: docker,                 tags: [ 'docker'                , 'docker-dev'                  , 'docker-all'              ] }
+      - { role: skype}
+      - { role: workbench}
+      - { role: sublime}
+      - { role: php}
+      - { role: nginx}
+      - { role: mysql}
+      - { role: mongodb}
+      - { role: robomongo}
+      - { role: redis-new}
+      - { role: teamviewer}
+      - { role: ejjaberd}
+      - { role: geany}
+      - { role: chrome}
+      - { role: filezilla}

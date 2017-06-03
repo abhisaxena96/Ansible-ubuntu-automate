@@ -1,0 +1,3 @@
+---
+- name: install chrome browser
+  include: chrome.yml
